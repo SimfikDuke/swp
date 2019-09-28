@@ -1,0 +1,32 @@
+# Python pre-compiled files
+*.pyc
+
+# Specific files
+logs/*
+pids/*
+static/*
+squid_configs/*
+config.yaml
+
+# Custom Configs
+configs/*
+!configs/default.yaml
+!configs/override_with.txt
+!configs/banned_keywords.txt
+
+# PyCharm
+.idea/
+# !.idea/dictionaries/*
+
+# Env exclude
+venv/*
+venv371/*
+.venv/*
+.venv371/*
+.python-version
+
+# Cookies
+cookies/*
+screenshots/*
+user_agents/
+logs/
