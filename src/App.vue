@@ -56,6 +56,28 @@ import store from '../src/store'
       }
     },
     methods: {
+      updateAuth: function () {
+        if (localStorage.token) {
+          axios.get(store.state.apiUrl + 'user', {
+            headers: {
+              Authorization: localStorage.token
+            }})
+                  .then(response => {
+                    localStorage.userName = response.user.name
+                    localStorage.isAdmin = response.role === 777
+                    this.userName = response.user.name
+                  })
+                  .catch(
+                          response => {
+                            // eslint-disable-next-line no-console
+                            console.log(response)
+                            localStorage.userName = null
+                          }
+                  )
+        } else {
+          localStorage.userName = null
+        }
+      },
       login: function () {
         axios
                 .post(store.state.apiUrl + 'login', {
@@ -64,7 +86,7 @@ import store from '../src/store'
                 })
                 .then(response => {
                   localStorage.token = response.data.token
-                  store.actions.updateAuth()
+                  this.updateAuth()
                 })
       },
       register: function () {
@@ -76,7 +98,7 @@ import store from '../src/store'
                 })
                 .then(response => {
                   localStorage.token = response.data.token
-                  store.actions.updateAuth()
+                  this.updateAuth()
                 })
       }
     }

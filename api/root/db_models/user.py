@@ -32,5 +32,5 @@ class User(models.Base):
             'name': self.name,
             'email': self.email,
             'role': self.role,
-            'created_at': self.created_at,
+            'created_at': self.created_at.strftime('%H:%M  %d %h'),
         }
