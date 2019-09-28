@@ -101,7 +101,7 @@ class BaseHandler(RequestHandler):
             self.user = None
         user = self.session.query(models.User) \
             .filter(models.User.token == token).first()
-        if user.token_updated_at < datetime.datetime.now() - datetime.timedelta(days=1):
+        if user is not None and user.token_updated_at < datetime.datetime.now() - datetime.timedelta(days=1):
             user.token = None
         else:
             self.user = user

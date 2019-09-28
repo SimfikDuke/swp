@@ -6,7 +6,7 @@ Vue.use(Vuex)
 import axios from 'axios'
 export default new Vuex.Store({
   state: {
-    apiUrl: 'http://localhost:5000/'
+    apiUrl: 'http://simfik.ru:5000/'
   },
   mutations: {
 
