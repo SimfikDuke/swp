@@ -15,6 +15,8 @@ def make_app():
     }
     return tornado.web.Application([
         (r"/records", RecordsHandler),
+        (r"/login", LoginHandler),
+        (r"/register", LoginHandler),
     ], **settings)
 
 

@@ -11,12 +11,15 @@ import root.db_models as models
 import root.handlers_space as hs
 import root.utils as utils
 from root.utils import JsonArgs
+import root.enums as enums
 
 
 class BaseHandler(RequestHandler):
     session = Session(engine, expire_on_commit=False)
     json_args: JsonArgs = JsonArgs({})
     records: hs.RecordsHS
+    users: hs.UsersHS
+    user = None
 
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*")
@@ -57,6 +60,7 @@ class BaseHandler(RequestHandler):
                     self.json_args[k] = v[0].decode('utf-8')
                 elif len(v) > 1:
                     self.json_args[k] = [v[i].decode('utf-8') for i in range(len(v))]
+        self.identify_user()
         self.init_hs()
         self.json_args.finish_method = self.send_json
 
@@ -72,6 +76,7 @@ class BaseHandler(RequestHandler):
 
     def init_hs(self):
         self.records = hs.RecordsHS(self, self.session)
+        self.users = hs.UsersHS(self, self.session)
 
     def send_ok(self):
         ok_data = {
@@ -79,9 +84,23 @@ class BaseHandler(RequestHandler):
         }
         self.send_json(ok_data)
 
+    def send_failed(self):
+        ok_data = {
+            'msg': 'failed'
+        }
+        self.send_json(ok_data, 400)
+
     def write_error(self, status_code: int, **kwargs: Any):
         exc = kwargs['exc_info'][1]
         self.send_json(f'Error. {exc}', status_code)
+
+    def identify_user(self):
+        token = self.request.headers.get('Authorization')
+        if token is None:
+            self.user = None
+        user = self.session.query(models.User) \
+            .filter(models.User.token == token).first()
+        self.user = user
 
 
 class RecordsHandler(BaseHandler):
@@ -90,7 +109,36 @@ class RecordsHandler(BaseHandler):
         self.send_json({'data': utils.to_web(records)})
 
     def post(self):
-        title = self.json_args['title']
-        text = self.json_args['text']
-        self.records.add_record(title, text)
+        if self.user and self.user.role == enums.UserRole.Admin.value:
+            title = self.json_args['title']
+            text = self.json_args['text']
+            self.records.add_record(title, text)
+            self.send_ok()
+        else:
+            self.send_failed()
+
+
+class LoginHandler(BaseHandler):
+    def post(self):
+        login = self.json_args['login']
+        password = self.json_args['password']
+        token = self.users.login(login, password)
+        if token:
+            self.send_json({'token': token})
+        else:
+            self.send_failed()
+
+
+class RegisterHandler(BaseHandler):
+    def post(self):
+        name = self.json_args['name']
+        login = self.json_args['login']
+        password = self.json_args['password']
+        token = self.users.register(name, login, password)
+        if token:
+            self.send_json({'token': token})
+        else:
+            self.send_failed()
+
+    def get(self):
         self.send_ok()

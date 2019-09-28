@@ -1,5 +1,6 @@
 import logging
 import os
+import random
 from contextlib import contextmanager
 from typing import Any, List
 
@@ -45,3 +46,7 @@ def sess(auto_commit=True) -> Session:
 
 def to_web(items: List[Any], **kwargs):
     return list(map(lambda item: item.to_web(**kwargs), items))
+
+
+def generate_token():
+    return ''.join((chr(65 + random.choice(range(26))) for _ in range(24)))

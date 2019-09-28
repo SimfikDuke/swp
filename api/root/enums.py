@@ -10,3 +10,8 @@ class DBConfig:
     name: str
     login: str
     password: str
+
+
+class UserRole(IntEnum):
+    User = 0
+    Admin = 777
