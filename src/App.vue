@@ -28,9 +28,10 @@
         <router-link to="/first">Первая</router-link> |
         <router-link to="/cards">Вторая</router-link> |
         <router-link to="/tickets">Третья</router-link>
-        <v-btn style="margin-left: 30px" @click="authDialog = !authDialog" small rounded outlined>Авторизация</v-btn>
-        <v-btn style="margin-left: 30px" @click="regDialog = !regDialog" small rounded outlined>Регистрация</v-btn>
-        <span v-if="userName" style="margin-left: 30px">Добро пожаловать, {{ userName }}</span>
+        <v-btn v-if="!userName" style="margin-left: 30px" @click="authDialog = !authDialog" small rounded outlined>Авторизация</v-btn>
+        <v-btn v-if="!userName" style="margin-left: 30px" @click="regDialog = !regDialog" small rounded outlined>Регистрация</v-btn>
+          <span v-if="userName" style="margin-left: 30px; font-size: 18px">Вы вошли как <b>{{ userName }}</b></span>
+          <v-btn v-if="userName" style="margin-left: 30px" @click="logout" small rounded outlined>Выйти</v-btn>
       </div></div>
     </v-app-bar>
     <v-content>
@@ -55,27 +56,37 @@ import store from '../src/store'
         regPassword: ''
       }
     },
+    mounted () {
+      this.updateAuth()
+    },
     methods: {
       updateAuth: function () {
         if (localStorage.token) {
-          axios.get(store.state.apiUrl + 'user', {
-            headers: {
-              Authorization: localStorage.token
-            }})
-                  .then(response => {
-                    localStorage.userName = response.user.name
-                    localStorage.isAdmin = response.role === 777
-                    this.userName = response.user.name
+          axios
+            .get(store.state.apiUrl + 'user', {
+              headers: {
+                Authorization: localStorage.token
+              }})
+            .then(response => {
+              localStorage.userName = response.data.user.name
+              localStorage.isAdmin = response.role === 777
+              this.userName = response.data.user.name
+            })
+            .catch(
+                    response => {
+                      // eslint-disable-next-line no-console
+                      console.log(response)
+                      localStorage.userName = null
+                    }
+            )
+                  .finally(() => {
+                    this.authDialog = false
+                    this.regDialog = false
                   })
-                  .catch(
-                          response => {
-                            // eslint-disable-next-line no-console
-                            console.log(response)
-                            localStorage.userName = null
-                          }
-                  )
         } else {
           localStorage.userName = null
+          localStorage.isAdmin = null
+          this.userName = null
         }
       },
       login: function () {
@@ -88,6 +99,12 @@ import store from '../src/store'
                   localStorage.token = response.data.token
                   this.updateAuth()
                 })
+      },
+      logout: function () {
+        localStorage.token = null
+        localStorage.userName = null
+        localStorage.isAdmin = null
+        this.userName = null
       },
       register: function () {
         axios
