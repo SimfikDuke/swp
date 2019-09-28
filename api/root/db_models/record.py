@@ -24,9 +24,8 @@ class Record(models.Base):
     def to_web(self):
         return {
             'id': self.id,
-            'user_id': self.user_id,
+            'user': self.user.to_web(),
             'title': self.title,
             'text': self.text,
-            'author': self.user.name,
             'created_at': self.created_at.strftime('%H:%M  %d %h'),
         }

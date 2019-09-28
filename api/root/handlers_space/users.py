@@ -9,11 +9,10 @@ class UsersHS(BaseHS):
     def login(self, login: str, password: str):
         user = self.session.query(models.User) \
             .filter(models.User.email == login) \
-            .filter(models.User.password == password) \
             .first()
-        if user is None:
+        if user is None or user.password != password:
             return None
-        if user.token_updated_at < datetime.datetime.now() + datetime.timedelta(days=1):
+        if user.token_updated_at < datetime.datetime.now() - datetime.timedelta(days=1):
             user.token = utils.generate_token()
         return user.token
 

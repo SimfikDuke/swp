@@ -10,6 +10,7 @@ class BaseHS(ABC):
     session = None
     user: models.User = None
 
-    def __init__(self, request, session: Session):
+    def __init__(self, request, session: Session, user: models.User):
         self.request = request
         self.session = session
+        self.user = user

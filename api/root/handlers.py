@@ -1,3 +1,4 @@
+import datetime
 from typing import Any
 
 from sqlalchemy.orm import Session
@@ -75,8 +76,8 @@ class BaseHandler(RequestHandler):
         self.finish(escape.json_encode(data))
 
     def init_hs(self):
-        self.records = hs.RecordsHS(self, self.session)
-        self.users = hs.UsersHS(self, self.session)
+        self.records = hs.RecordsHS(self, self.session, self.user)
+        self.users = hs.UsersHS(self, self.session, self.user)
 
     def send_ok(self):
         ok_data = {
@@ -100,7 +101,10 @@ class BaseHandler(RequestHandler):
             self.user = None
         user = self.session.query(models.User) \
             .filter(models.User.token == token).first()
-        self.user = user
+        if user.token_updated_at < datetime.datetime.now() - datetime.timedelta(days=1):
+            user.token = None
+        else:
+            self.user = user
 
 
 class RecordsHandler(BaseHandler):
@@ -125,6 +129,14 @@ class LoginHandler(BaseHandler):
         token = self.users.login(login, password)
         if token:
             self.send_json({'token': token})
+        else:
+            self.send_failed()
+
+
+class UserHandler(BaseHandler):
+    def get(self):
+        if self.user:
+            self.send_json({'user': self.user.to_web()})
         else:
             self.send_failed()
 
