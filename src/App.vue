@@ -76,14 +76,19 @@ import store from '../src/store'
               }})
             .then(response => {
               localStorage.userName = response.data.user.name
-              localStorage.isAdmin = response.role === 777
+              localStorage.isAdmin = response.data.user.role === 777
               this.userName = response.data.user.name
+              this.$root.userName = response.data.user.name
+              this.$root.isAdmin = response.data.user.role === 777
             })
             .catch(
                     response => {
                       // eslint-disable-next-line no-console
                       console.log(response)
                       localStorage.userName = null
+                      localStorage.isAdmin = false
+                      this.$root.userName = null
+                      this.$root.isAdmin = false
                     }
             )
                   .finally(() => {
@@ -94,6 +99,8 @@ import store from '../src/store'
           localStorage.userName = null
           localStorage.isAdmin = null
           this.userName = null
+          this.$root.userName = null
+          this.$root.isAdmin = false
         }
       },
       login: function () {
@@ -106,12 +113,15 @@ import store from '../src/store'
                   localStorage.token = response.data.token
                   this.updateAuth()
                 })
+                .catch(() => this.updateAuth())
       },
       logout: function () {
         localStorage.token = null
         localStorage.userName = null
         localStorage.isAdmin = false
         this.userName = null
+        this.$root.userName = null
+        this.$root.isAdmin = false
       },
       register: function () {
         axios

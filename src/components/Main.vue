@@ -3,9 +3,14 @@
     <v-layout
       wrap
     >
-      <v-flex v-if="isAdmin">
-        <RecordAddCard/>
-      </v-flex>
+      <v-flex>
+        <RecordCard
+                :title="isAdmin"
+                :text="userName"
+        />
+      </v-flex> <v-flex v-if="isAdmin">
+      <RecordAddCard/>
+    </v-flex>
       <v-flex v-for="record in records" :key="record.id">
         <RecordCard
                 :title="record.title"
