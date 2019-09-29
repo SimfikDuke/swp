@@ -1,6 +1,6 @@
 import Router from 'vue-router'
 import First from "../components/First";
-import HelloWorld from "../components/HelloWorld";
+import Main from "../components/Main";
 import Vue from 'vue'
 
 
@@ -10,8 +10,8 @@ export default new Router({
     routes: [
         {
             path: '/',
-            name: 'HelloWorld',
-            component: HelloWorld
+            name: 'Main',
+            component: Main
         },
         {
             path: '/first',

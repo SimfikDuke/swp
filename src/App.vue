@@ -23,16 +23,23 @@
     </v-dialog>
     <v-app-bar app>
       <div id="nav">
-        <div>
-        <router-link to="/">Главная</router-link> |
-        <router-link to="/first">Первая</router-link> |
-        <router-link to="/cards">Вторая</router-link> |
-        <router-link to="/tickets">Третья</router-link>
-        <v-btn v-if="!userName" style="margin-left: 30px" @click="authDialog = !authDialog" small rounded outlined>Авторизация</v-btn>
-        <v-btn v-if="!userName" style="margin-left: 30px" @click="regDialog = !regDialog" small rounded outlined>Регистрация</v-btn>
-          <span v-if="userName" style="margin-left: 30px; font-size: 18px">Вы вошли как <b>{{ userName }}</b></span>
-          <v-btn v-if="userName" style="margin-left: 30px" @click="logout" small rounded outlined>Выйти</v-btn>
-      </div></div>
+        <v-container>
+          <v-row>
+            <v-col lg="9" align="left">
+              <router-link to="/">Главная</router-link> |
+              <router-link to="/first">Первая</router-link> |
+              <router-link to="/cards">Вторая</router-link> |
+              <router-link to="/tickets">Третья</router-link>
+            </v-col>
+            <v-col lg="3">
+              <v-btn v-if="!userName" class="mButtons" @click="authDialog = !authDialog" small rounded outlined>Авторизация</v-btn>
+              <v-btn v-if="!userName" class="mButtons" @click="regDialog = !regDialog" small rounded outlined>Регистрация</v-btn>
+              <span v-if="userName" class="mButtons" style="font-size: 18px">Вы вошли как <b>{{ userName }}</b></span>
+              <v-btn v-if="userName" class="mButtons" @click="logout" small rounded outlined>Выйти</v-btn>
+            </v-col>
+          </v-row>
+        </v-container>
+      </div>
     </v-app-bar>
     <v-content>
       <router-view/>
@@ -103,7 +110,7 @@ import store from '../src/store'
       logout: function () {
         localStorage.token = null
         localStorage.userName = null
-        localStorage.isAdmin = null
+        localStorage.isAdmin = false
         this.userName = null
       },
       register: function () {
@@ -131,8 +138,12 @@ import store from '../src/store'
   }
   #nav {
     padding: 30px;
+    width: 100%;
   }
   .lft {
     padding: 25px;
+  }
+  .mButtons {
+    margin-left: 5px
   }
 </style>
