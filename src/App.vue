@@ -8,6 +8,7 @@
         <v-text-field v-model="logLogin" label="Логин"></v-text-field>
         <v-text-field v-model="logPassword" label="Пароль"></v-text-field>
         <v-btn @click="login" rounded width="100%">Войти</v-btn>
+        <v-btn rounded width="100%" style="margin-top: 15px" @click="authDialog = false">Отмена</v-btn>
       </v-card>
     </v-dialog>
     <v-dialog
@@ -19,6 +20,7 @@
         <v-text-field v-model="regLogin" label="Логин"></v-text-field>
         <v-text-field v-model="regPassword" label="Пароль"></v-text-field>
         <v-btn rounded width="100%" @click="register">Зарегистрироваться</v-btn>
+        <v-btn rounded width="100%" style="margin-top: 15px" @click="regDialog = false">Отмена</v-btn>
       </v-card>
     </v-dialog>
     <v-app-bar app>
@@ -27,9 +29,9 @@
           <v-row>
             <v-col lg="9" align="left">
               <router-link to="/">Главная</router-link> |
-              <router-link to="/first">Первая</router-link> |
-              <router-link to="/cards">Вторая</router-link> |
-              <router-link to="/tickets">Третья</router-link>
+              <router-link to="/first">График</router-link> |
+              <router-link to="/test">Тест</router-link> |
+              <router-link to="/next">Пустая</router-link>
             </v-col>
             <v-col lg="3">
               <v-btn v-if="!userName" class="mButtons" @click="authDialog = !authDialog" small rounded outlined>Авторизация</v-btn>
@@ -150,6 +152,8 @@ import store from '../src/store'
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
     color: #2c3e50;
+    background-image: url("https://t4america.org/wp-content/uploads/2013/11/sky.png");
+    background-repeat: round;
   }
   #nav {
     padding: 30px;
