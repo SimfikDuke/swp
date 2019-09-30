@@ -46,7 +46,8 @@
             <v-card-actions>
                 <v-btn v-if="state < 2" @click="nextTest" :disabled="lastSelected === -1">Далее</v-btn>
                 <v-btn v-else-if="state < 3" @click="nextTest" :disabled="lastSelected === -1">Результат</v-btn>
-                <v-btn v-el        </v-card-actions>
+                <v-btn v-else @click="nextTest">Заново</v-btn>
+            </v-card-actions>
         </v-card>
     </v-container>
 </template>
