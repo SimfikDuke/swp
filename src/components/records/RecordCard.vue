@@ -10,18 +10,38 @@
             <span class="dateSpan">{{ date }}</span>
             <v-spacer></v-spacer>
             <span class="authorSpan">{{ author }}</span>
+            <v-btn v-if="isAdmin" @click="deleteRecord" xx-small text icon><v-icon>mdi-delete</v-icon></v-btn>
         </v-card-actions>
     </v-card>
 </template>
 
 <script>
+    import axios from 'axios'
+    import store from '@/store'
     export default {
         name: 'RecordCard',
         props: {
+            id: Number,
             title: String,
             text: String,
             date: String,
-            author: String
+            author: String,
+            isAdmin: Boolean,
+            callbackMethod: Function
+        },
+        methods: {
+            deleteRecord: function () {
+                axios
+                    .delete(store.state.apiUrl + 'records/' + this.id,
+                        {
+                            headers: {
+                                Authorization: localStorage.token
+                            }
+                        })
+                    .then(() => {
+                        this.callbackMethod()
+                    })
+            }
         }
     }
 </script>

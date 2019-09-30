@@ -68,6 +68,7 @@ import store from '../src/store'
     },
     methods: {
       updateAuth: function () {
+        let needReload = false
         if (localStorage.token) {
           axios
             .get(store.state.apiUrl + 'user', {
@@ -75,11 +76,13 @@ import store from '../src/store'
                 Authorization: localStorage.token
               }})
             .then(response => {
+              if (localStorage.userName !== response.data.user.name) {
+                needReload = true
+              }
               localStorage.userName = response.data.user.name
-              localStorage.isAdmin = response.data.user.role === 777
+              localStorage.isAdmin = response.data.user.role == 777
+              localStorage.userRole = response.data.user.role
               this.userName = response.data.user.name
-              this.$root.userName = response.data.user.name
-              this.$root.isAdmin = response.data.user.role === 777
             })
             .catch(
                     response => {
@@ -87,20 +90,21 @@ import store from '../src/store'
                       console.log(response)
                       localStorage.userName = null
                       localStorage.isAdmin = false
-                      this.$root.userName = null
-                      this.$root.isAdmin = false
+                      localStorage.userRole = null
                     }
             )
                   .finally(() => {
                     this.authDialog = false
                     this.regDialog = false
+                    if (needReload){
+                      location.reload()
+                    }
                   })
         } else {
           localStorage.userName = null
-          localStorage.isAdmin = null
+          localStorage.userRole = null
+          localStorage.isAdmin = false
           this.userName = null
-          this.$root.userName = null
-          this.$root.isAdmin = false
         }
       },
       login: function () {
@@ -118,10 +122,11 @@ import store from '../src/store'
       logout: function () {
         localStorage.token = null
         localStorage.userName = null
+        localStorage.userRole = null
         localStorage.isAdmin = false
         this.userName = null
-        this.$root.userName = null
-        this.$root.isAdmin = false
+        this.userRole = null
+        location.reload()
       },
       register: function () {
         axios

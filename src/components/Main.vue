@@ -4,19 +4,18 @@
       wrap
     >
       <v-flex>
-        <RecordCard
-                :title="isAdmin"
-                :text="userName"
-        />
-      </v-flex> <v-flex v-if="isAdmin">
-      <RecordAddCard/>
-    </v-flex>
+        <RecordAddCard v-if="userRole == 777" :callback-method="updateRecords">
+        </RecordAddCard>
+      </v-flex>
       <v-flex v-for="record in records" :key="record.id">
         <RecordCard
+                :id="record.id"
                 :title="record.title"
                 :text="record.text"
                 :date="record.created_at"
                 :author="record.user.name"
+                :isAdmin="isAdmin"
+                :callback-method="updateRecords"
         />
       </v-flex>
     </v-layout>
@@ -35,7 +34,8 @@
       return {
         records: [],
         userName: null,
-        isAdmin: false
+        isAdmin: false,
+        userRole: 0
       }
     },
     mounted () {
@@ -55,7 +55,8 @@
       },
       updateUser: function () {
         this.userName = localStorage.userName
-        this.isAdmin = localStorage.isAdmin
+        this.isAdmin = localStorage.isAdmin === 'true'
+        this.userRole = localStorage.userRole
       }
     }
   }

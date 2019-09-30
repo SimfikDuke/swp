@@ -121,6 +121,13 @@ class RecordsHandler(BaseHandler):
         else:
             self.send_failed()
 
+    def delete(self, record_id: str):
+        if self.user and self.user.role == enums.UserRole.Admin.value:
+            self.records.delete(int(record_id))
+            self.send_ok()
+        else:
+            self.send_failed()
+
 
 class LoginHandler(BaseHandler):
     def post(self):
